@@ -1,0 +1,6 @@
+@VisitCountApi_HostAddress = http://localhost:5007
+
+GET {{VisitCountApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
