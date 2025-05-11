@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using VisitCountApi.Data;
@@ -104,7 +105,7 @@ namespace VisitCountApi.Controllers
                 Expires = DateTime.Now.AddMinutes(20) ,
                 HttpOnly = true ,
                 Secure = true ,
-                SameSite = SameSiteMode.Strict
+                SameSite = SameSiteMode.None
             };
 
             Response.Cookies.Append(key, value, cookieOptions);

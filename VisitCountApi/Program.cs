@@ -7,6 +7,18 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name : "_myAllowSpecificOrigins" ,
+        policy =>
+        {
+            policy.WithOrigins("https://localhost:7128") // your frontend URL
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials(); // important for cookie support
+        });
+});
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<VisitorCountContext>(options =>
@@ -25,6 +37,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("_myAllowSpecificOrigins"); // <- use it here
 
 app.UseAuthorization();
 
