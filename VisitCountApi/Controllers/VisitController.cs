@@ -37,13 +37,14 @@ namespace VisitCountApi.Controllers
                 HttpContext.Session.SetString(sessionKey, visitID.ToString());
                 success = await AddVisitor(visitID);
                 if (success) 
-                    return Ok("Record Successfully Initialized");
+                    return File("~/collect.gif", "image/gif");
             }
             else
             {
                 success = await UpdateVisitor(visitID);
                 if (success)
-                    return Ok("Record Successfully Updated");
+                    //return Ok("Record Successfully Updated");
+                    return File("~/collect.gif", "image/gif");
             }
             return BadRequest("something went wrong!");
         }
