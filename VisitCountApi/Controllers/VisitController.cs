@@ -6,7 +6,7 @@ using VisitCountApi.Entities;
 
 namespace VisitCountApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("Session")]
     [ApiController]
     public class VisitController : ControllerBase
     {
@@ -20,10 +20,10 @@ namespace VisitCountApi.Controllers
 
 
         // Client send something e.g.uploading Image to server and the method create or modify visitor properties and also add Session
-        [HttpPost]
-        public async Task<IActionResult> VisitCount(string something)
+        [HttpGet]
+        public async Task<IActionResult> VisitCount(string t)
         {
-            if (string.IsNullOrWhiteSpace(something )&& false)
+            if (string.IsNullOrWhiteSpace(t)&& false)
             {
                 //Parameter logic
                 return BadRequest("Something went wrong!");
@@ -36,14 +36,14 @@ namespace VisitCountApi.Controllers
                 visitID = Guid.NewGuid();
                 SetCookie(cookieKey, visitID.ToString());
                 success = await AddVisitor(visitID);
-                if (success) 
-                    return Ok("Record Successfully Initialized");
+                if (success)
+                    return File("~/collect.gif", "image/gif");
             }
             else
             {
                 success = await UpdateVisitor(visitID);
                 if (success)
-                    return Ok("Record Successfully Updated");
+                    return File("~/collect.gif", "image/gif");
             }
             return BadRequest("something went wrong!");
         }
