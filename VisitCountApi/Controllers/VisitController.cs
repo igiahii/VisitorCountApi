@@ -6,7 +6,7 @@ using VisitCountApi.Entities;
 
 namespace VisitCountApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("session")]
     [ApiController]
     public class VisitController : ControllerBase
     {
@@ -20,10 +20,10 @@ namespace VisitCountApi.Controllers
 
 
         // Client send something e.g.uploading Image to server and the method create or modify visitor properties and also add Session
-        [HttpPost]
-        public async Task<IActionResult> VisitCount(string something)
+        [HttpGet]
+        public async Task<IActionResult> VisitCount(string t)
         {
-            if (string.IsNullOrWhiteSpace(something )&& false)
+            if (string.IsNullOrWhiteSpace(t)&& false)
             {
                 //Parameter logic
                 return BadRequest("Something went wrong!");
