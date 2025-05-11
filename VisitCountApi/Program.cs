@@ -15,14 +15,6 @@ builder.Services.AddDbContext<VisitorCountContext>(options =>
 
 builder.Services.AddLogging(b => b.AddSeq("http://192.168.1.193:9020/", "Oaku4wNw79cfNHOqwkQo"));
 
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -38,7 +30,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.UseSession();
 
 using (var scope = app.Services.CreateScope())
 {

@@ -28,13 +28,13 @@ namespace VisitCountApi.Controllers
                 //Parameter logic
                 return BadRequest("Something went wrong!");
             }
-            const string sessionKey = "VisitID";
-            var visitIdStr = HttpContext.Session.GetString(sessionKey);
+            const string cookieKey = "VisitID";
+            var visitIdStr = Request.Cookies[cookieKey];
             bool success;
             if (string.IsNullOrEmpty(visitIdStr) || !Guid.TryParse(visitIdStr , out Guid visitID))
             {
                 visitID = Guid.NewGuid();
-                HttpContext.Session.SetString(sessionKey, visitID.ToString());
+                SetCookie(cookieKey, visitID.ToString());
                 success = await AddVisitor(visitID);
                 if (success) 
                     return Ok("Record Successfully Initialized");
@@ -95,6 +95,19 @@ namespace VisitCountApi.Controllers
                 _logger.LogError(ex, "VisitController UpdateVisitor");
                 return false;
             }
+        }
+
+        private void SetCookie(string key, string value)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                Expires = DateTime.Now.AddMinutes(20) ,
+                HttpOnly = true ,
+                Secure = true ,
+                SameSite = SameSiteMode.Strict
+            };
+
+            Response.Cookies.Append(key, value, cookieOptions);
         }
 
     }
