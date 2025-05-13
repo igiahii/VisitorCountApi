@@ -13,10 +13,12 @@ namespace VisitCountApi.Controllers
     {
         private readonly ILogger<VisitController> _logger;
         private readonly VisitorCountContext _context;
-        public VisitController(ILogger<VisitController> logger, VisitorCountContext context)
+        private readonly IConfiguration _configuration;
+        public VisitController(ILogger<VisitController> logger, VisitorCountContext context , IConfiguration configuration)
         {
             _logger = logger;
             _context = context;
+            _configuration = configuration;
         }
 
 
@@ -32,19 +34,25 @@ namespace VisitCountApi.Controllers
             const string cookieKey = "VisitID";
             var visitIdStr = Request.Cookies[cookieKey];
             bool success;
+            //get the byte[] file from path (sample)
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "Img", "Screenshot.png");
+            var file = System.IO.File.ReadAllBytes(path);
+
             if (string.IsNullOrEmpty(visitIdStr) || !Guid.TryParse(visitIdStr , out Guid visitID))
             {
                 visitID = Guid.NewGuid();
                 SetCookie(cookieKey, visitID.ToString());
                 success = await AddVisitor(visitID);
                 if (success)
-                    return File("~/collect.gif", "image/gif");
+                {
+                    return File(file, "image/png");
+                }
             }
             else
             {
                 success = await UpdateVisitor(visitID);
                 if (success)
-                    return File("~/collect.gif", "image/gif");
+                    return File(file, "image/png");
             }
             return BadRequest("something went wrong!");
         }
@@ -100,12 +108,13 @@ namespace VisitCountApi.Controllers
 
         private void SetCookie(string key, string value)
         {
+            int expirationTime = _configuration.GetValue<int>("CookieSettings:ExpirationTime");
             var cookieOptions = new CookieOptions
             {
-                Expires = DateTime.Now.AddMinutes(20) ,
+                Expires = DateTime.Now.AddMinutes(expirationTime) ,
                 HttpOnly = true ,
                 Secure = true ,
-                SameSite = SameSiteMode.None
+                SameSite = SameSiteMode.Lax
             };
 
             Response.Cookies.Append(key, value, cookieOptions);

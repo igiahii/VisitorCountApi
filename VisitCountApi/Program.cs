@@ -12,7 +12,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name : "_myAllowSpecificOrigins" ,
         policy =>
         {
-            policy.WithOrigins("https://localhost:7128") // your frontend URL
+            policy.WithOrigins("https://localhost:7195") // your frontend URL
                   .AllowAnyHeader()
                   .AllowAnyMethod()
                   .AllowCredentials(); // important for cookie support
@@ -40,6 +40,7 @@ app.UseHttpsRedirection();
 
 app.UseCors("_myAllowSpecificOrigins"); // <- use it here
 
+app.UseStaticFiles();
 app.UseAuthorization();
 
 app.MapControllers();
