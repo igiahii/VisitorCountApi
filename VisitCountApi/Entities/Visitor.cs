@@ -8,6 +8,7 @@ namespace VisitCountApi.Entities
         public Guid VisitId { get; set; }
         public DateTime? InstertDateTime { get; set; }
         public DateTime? LastUpdateDateTime{ get; set; }
+        public DateTime? ExpiryDateTime{ get; set; }
         public short VisitCount { get; set; }
     }
 }
