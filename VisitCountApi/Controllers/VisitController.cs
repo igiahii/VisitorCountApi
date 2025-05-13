@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using VisitCountApi.Data;
 using VisitCountApi.Entities;
+using VisitCountApi.Services.Interfaces;
 
 namespace VisitCountApi.Controllers
 {
@@ -11,13 +12,11 @@ namespace VisitCountApi.Controllers
     [ApiController]
     public class VisitController : ControllerBase
     {
-        private readonly ILogger<VisitController> _logger;
-        private readonly VisitorCountContext _context;
+        private readonly IVisitService _visitService;
         private readonly IConfiguration _configuration;
-        public VisitController(ILogger<VisitController> logger, VisitorCountContext context , IConfiguration configuration)
+        public VisitController(IVisitService visitService, IConfiguration configuration)
         {
-            _logger = logger;
-            _context = context;
+            _visitService = visitService;
             _configuration = configuration;
         }
 
@@ -26,7 +25,7 @@ namespace VisitCountApi.Controllers
         [HttpGet]
         public async Task<IActionResult> VisitCount(string t)
         {
-            if (string.IsNullOrWhiteSpace(t)&& false)
+            if (string.IsNullOrWhiteSpace(t) && false)
             {
                 //Parameter logic
                 return BadRequest("Something went wrong!");
@@ -38,82 +37,38 @@ namespace VisitCountApi.Controllers
             string path = Path.Combine(Directory.GetCurrentDirectory(), "Img", "Screenshot.png");
             var file = System.IO.File.ReadAllBytes(path);
 
-            if (string.IsNullOrEmpty(visitIdStr) || !Guid.TryParse(visitIdStr , out Guid visitID))
+            if (string.IsNullOrEmpty(visitIdStr) || !Guid.TryParse(visitIdStr, out Guid visitID))
             {
                 visitID = Guid.NewGuid();
                 SetCookie(cookieKey, visitID.ToString());
-                success = await AddVisitor(visitID);
-                if (success)
-                {
-                    return File(file, "image/png");
-                }
+                success = await _visitService.AddVisitorAsync(visitID);
+                //if (success)
+                //{
+                //    return File(file, "image/png");
+                //}
             }
             else
             {
-                success = await UpdateVisitor(visitID);
-                if (success)
+                success = await _visitService.UpdateVisitorAsync(visitID);
+            }
+            if (success)
+            {
+                if(await _visitService.UpdateDailyVisitAsync())
                     return File(file, "image/png");
             }
             return BadRequest("something went wrong!");
         }
 
 
-        private async Task<bool> AddVisitor(Guid visitID)
-        {
-            try
-            {
-                if (await _context.Visitors.AnyAsync(v => v.VisitId == visitID))
-                {
-                    visitID = Guid.NewGuid();
-                }
-                var visitor = new Visitor
-                {
-                    VisitId = visitID,
-                    InstertDateTime = DateTime.Now,
-                    LastUpdateDateTime = DateTime.Now,
-                    VisitCount = 1
-                };
-                _context.Visitors.Add(visitor);
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "VisitController AddVisitor");
-                return false;
-            }
-        }
-
-        private async Task<bool> UpdateVisitor(Guid visitID)
-        {
-            try
-            {
-                var visitor = await _context.Visitors.FirstOrDefaultAsync(v => v.VisitId == visitID);
-                if (visitor is null)
-                {
-                    _logger.LogWarning("Visitor not found for VisitID: {VisitID}", visitID);
-                    return false;
-                }
-                visitor.LastUpdateDateTime = DateTime.Now;
-                visitor.VisitCount++;
-                await _context.SaveChangesAsync(); 
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "VisitController UpdateVisitor");
-                return false;
-            }
-        }
 
         private void SetCookie(string key, string value)
         {
             int expirationTime = _configuration.GetValue<int>("CookieSettings:ExpirationTime");
             var cookieOptions = new CookieOptions
             {
-                Expires = DateTime.Now.AddMinutes(expirationTime) ,
-                HttpOnly = true ,
-                Secure = true ,
+                Expires = DateTime.Now.AddMinutes(expirationTime),
+                HttpOnly = true,
+                Secure = true,
                 SameSite = SameSiteMode.Lax
             };
 

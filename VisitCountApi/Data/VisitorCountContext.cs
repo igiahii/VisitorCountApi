@@ -9,6 +9,18 @@ namespace VisitCountApi.Data
         {
         }
 
-        public virtual DbSet<Visitor> Visitors{ get; set; }
+        public virtual DbSet<Visitor> Visitors { get; set; }
+        public virtual DbSet<DailyVisit> DailyVisits { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<DailyVisit>(entity =>
+                entity.HasKey(e => e.PersianDateID)
+            );
+            modelBuilder.Entity<Visitor>(entity =>
+                entity.HasKey(e => e.VisitId)
+            );
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }
