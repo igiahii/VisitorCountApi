@@ -41,8 +41,7 @@ namespace VisitCountApi.Services.BackgroundServices
 
                     // Calculate time until next midnight
                     var now = DateTime.Now;
-                    //var nextRunTime = now.Date.AddDays(1);
-                    var nextRunTime = now.Date.AddMinutes(4);
+                    var nextRunTime = now.Date.AddDays(1);
                     var delay = nextRunTime - now;
 
 

@@ -12,8 +12,8 @@ using VisitCountApi.Data;
 namespace VisitCountApi.Migrations
 {
     [DbContext(typeof(VisitorCountContext))]
-    [Migration("20250513124203_RemoveKeyFromEntityDailyVisit")]
-    partial class RemoveKeyFromEntityDailyVisit
+    [Migration("20250514062836_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,10 +28,7 @@ namespace VisitCountApi.Migrations
             modelBuilder.Entity("VisitCountApi.Entities.DailyVisit", b =>
                 {
                     b.Property<int>("PersianDateID")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PersianDateID"));
 
                     b.Property<DateTime?>("InsertDateTime")
                         .HasColumnType("datetime2");

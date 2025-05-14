@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using VisitCountApi.Data;
-using VisitCountApi.Services.BackgroundServices;
+using VisitCountApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,10 +25,9 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<VisitorCountContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("VisitCountDB"))
 );
-
 builder.Services.AddLogging(b => b.AddSeq("http://192.168.1.193:9020/", "Oaku4wNw79cfNHOqwkQo"));
 
-builder.Services.AddHostedService<DailyRecordService>();
+builder.Services.AddCustomServices();
 
 var app = builder.Build();
 

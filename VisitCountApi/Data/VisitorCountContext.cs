@@ -15,8 +15,10 @@ namespace VisitCountApi.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<DailyVisit>(entity =>
-                entity.HasKey(e => e.PersianDateID)
-            );
+            {
+                entity.HasKey(e => e.PersianDateID);
+                entity.Property(e => e.PersianDateID).ValueGeneratedNever();
+            });
             modelBuilder.Entity<Visitor>(entity =>
                 entity.HasKey(e => e.VisitId)
             );

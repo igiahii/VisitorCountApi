@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Util;
 
 namespace VisitCountApi.Entities
 {

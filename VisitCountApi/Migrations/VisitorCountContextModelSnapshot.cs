@@ -25,10 +25,7 @@ namespace VisitCountApi.Migrations
             modelBuilder.Entity("VisitCountApi.Entities.DailyVisit", b =>
                 {
                     b.Property<int>("PersianDateID")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PersianDateID"));
 
                     b.Property<DateTime?>("InsertDateTime")
                         .HasColumnType("datetime2");
